@@ -227,13 +227,17 @@ def convert_item_to_table(job_attr, dataset_id):
   #   encoded_jid = GLOBAL_CACHE["dataset_attrs"][index]["hid"]
   # else:
   encoded_jid = job_attr.get("encoded_id")
-  history = HISTORY_CACHE.get(dataset_id, {})
-  hid = history.get("hid", "DELETED")
+  if HISTORY_CACHE:
+    history = HISTORY_CACHE.get(dataset_id, {})
+    hid = history.get("hid", "DELETED")
+  else:
+    hid = "?"
+  exit_code = job_attr.get("exit_code")
   if job_attr["exit_code"] == 0:
-    status = "Ok"
+    status = f"Ok ({exit_code})"
     classes = "alert alert-success"
   else:
-    status = "Failed"
+    status = f"Failed ({exit_code})"
     classes = "alert alert-danger"
   if hid == "DELETED":
     classes += " deleted"
@@ -241,8 +245,6 @@ def convert_item_to_table(job_attr, dataset_id):
   if tool_name.count("/") >= 4:
     tool_name = job_attr["tool_id"].split("/")[-2]
   tool_name = tool_name + " - " + job_attr["tool_version"]
-  # print(GLOBAL_CACHE)
-  # print(encoded_jid)
   tool_name = f"[{hid}] - {tool_name}"
   return TABLE_TEMPLATE.format(
     classes=classes,
@@ -424,8 +426,11 @@ if __name__ == "__main__":
   with open(options.jobs_attrs) as j:
     jobs_attrs = json.load(j)
 
-  with open(options.dataset_attrs) as ds:
-    dataset_attrs = json.load(ds)
+  if options.dataset_attrs is not None:
+    with open(options.dataset_attrs) as ds:
+      dataset_attrs = json.load(ds)
+  else:
+    dataset_attrs = {}
 
   jobs_attrs = [{
     key: jobs_attr.get(key)
@@ -441,7 +446,10 @@ if __name__ == "__main__":
     )
   } for jobs_attr in jobs_attrs]
   if jobs_attrs and jobs_attrs[0].get("output_datasets"):
-    jobs_attrs = sorted(jobs_attrs, key=lambda x:x["output_datasets"][0])
+    jobs_attrs = sorted(
+      jobs_attrs,
+      key=lambda x:x["output_datasets"][0]
+    )
 
   with open(options.output, "w") as o:
     o.write(convert_to_html(jobs_attrs, dataset_attrs=dataset_attrs))
