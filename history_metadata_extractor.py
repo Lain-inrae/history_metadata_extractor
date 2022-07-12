@@ -6,13 +6,28 @@ import json
 PAGE_TEMPLATE = '\n'.join((
   "<!doctype HTML>",
   "<html>",
+  "{header}"
+  "  <body",
+  "    class=\"bg-secondary bg-gradient\"",
+  "    style=\"--bs-bg-opacity: .1;\"",
+  "  >",
+  "    <div class=\"container bg-white\">"
   "{styles}",
   "{title}",
   "{table_list}",
+  "    </div>"
+  "  </body>",
   "</html>",
 ))
 
+HEADER = """
+<head>
+  <link href="vendor/bootstrap.min.css" rel="stylesheet" />
+</head>
+"""
 CSS_STYLES = """
+"""
+"""
 <style>
 table{
   border: 1px solid;
@@ -48,25 +63,26 @@ TITLE_TEMPLATE = "<h1>Galaxy {galaxy_version}</h1>"
 TABLE_TEMPLATE = '\n'.join((
   "<h2>{tool_id}</h2>",
   "<h3>{tool_output}</h3>",
-  "<table>",
+  "<table class=\"table table-dark table-striped table-hover\">",
   "{table}",
   "</table>",
 ))
 
 HEADER_LIST_TEMPLATE = '\n'.join((
-  "<tr>",
+  "<thead class=\"\">",
   "{header_list}",
-  "</tr>",
+  "</thead>",
 ))
 
-HEADER_TEMPLATE = "<th>{}</th>"
+HEADER_TEMPLATE = "<th scope=\"col\">{}</th>"
+COLUMN_TEMPLATE = "<th scope=\"row\">{}</th>"
 
 TABLE_LINE_LIST_TEMPLATE = '\n'.join((
   "<tr class=\"{classes}\">",
   "{table_lines}",
   "</tr>",
 ))
-TABLE_LINE_TEMPLATE = "<td>{}</td>"
+TABLE_LINE_TEMPLATE = "<td class=\"\">{}</td>"
 
 INDENT = "  "
 
@@ -80,9 +96,10 @@ def indent(text):
 
 def convert_to_html(objects):
   return PAGE_TEMPLATE.format(
+    header=HEADER,
     styles=CSS_STYLES.replace("\n<", "\n  <"),
-    title=indent(get_title(objects)),
-    table_list=indent(get_table_list(objects))
+    title=indent(indent(get_title(objects))),
+    table_list=indent(indent(get_table_list(objects)))
   )
 
 def get_title(objects):
@@ -96,9 +113,16 @@ def get_table_list(objects):
   ))
 
 def convert_item_to_table(obj):
+  output_hid = obj.get("encoded_id")
+  if not output_hid:
+    print(obj)
+    if obj["output_datasets"]:
+      output_hid = ';'.join(map(str, sorted(obj["output_datasets"])))
+    else:
+      output_hid = "Unknown"
   return TABLE_TEMPLATE.format(
     tool_id=obj["tool_id"],
-    tool_output=obj.get("encoded_id"),
+    tool_output=output_hid,
     table=convert_parameters_to_html(obj)
   )
 
@@ -174,9 +198,9 @@ def get_table_lines(params, keys):
 
 def table_lines_iterator(params, param_names):
   keys = ("value", "name", "extension", "hid",)
-  for i, key in enumerate(keys):
-    classes = "even" if i % 2 else "odd"
-    table_lines = [key]
+  for key in keys:
+    classes = ""
+    table_lines = []
     for param_name in param_names:
       subparam = params
       while '.' in param_name:
@@ -186,10 +210,13 @@ def table_lines_iterator(params, param_names):
       table_lines.append(param)
     yield TABLE_LINE_LIST_TEMPLATE.format(
       classes=classes,
-      table_lines=indent('\n'.join(map(
-        TABLE_LINE_TEMPLATE.format,
-        table_lines
-      )))
+      table_lines=(
+        indent(COLUMN_TEMPLATE.format(key) + '\n')
+        + indent('\n'.join(map(
+          TABLE_LINE_TEMPLATE.format,
+          table_lines
+        )))
+      )
     )
 
 def extract_param_info(key, param):
@@ -254,13 +281,19 @@ if __name__ == "__main__":
   with open(options.input) as j:
     objects = json.load(j)
 
-  objects = [{
-    "galaxy_version": obj.get("galaxy_version"),
-    "tool_id": obj.get("tool_id"),
-    "tool_version": obj.get("tool_version"),
-    "encoded_id": obj.get("encoded_id"),
-    "params": obj.get("params"),
-  } for obj in objects]
+  objects = sorted([{
+    key: obj.get(key)
+    for key in (
+      "galaxy_version",
+      "tool_id",
+      "tool_version",
+      "encoded_id",
+      "params",
+      "output_datasets",
+    )
+  } for obj in objects],
+    key=lambda x:x.get("output_datasets", [-1])[0]
+  )
 
   with open(options.output, "w") as o:
     o.write(convert_to_html(objects))
