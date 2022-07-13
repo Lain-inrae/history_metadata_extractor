@@ -93,7 +93,7 @@ def get_table_list(jobs_attrs):
   return '\n'.join((
     convert_item_to_table(job_attr, dataset_id)
     for job_attr in jobs_attrs
-    for dataset_id_set in job_attr["output_dataset_mapping"].values()
+    for dataset_id_set in (job_attr["output_dataset_mapping"] or {1:"unknown"}).values()
     for dataset_id in dataset_id_set
   ))
 
