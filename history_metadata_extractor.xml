@@ -13,7 +13,7 @@
   </macros>
   <requirements>
     <requirement type="package" version="3.10">python</requirement>
-    <requirement type="package" version="1.7.1">py-optparse</requirement>
+    <!-- <requirement type="package" version="1.7.1">py-optparse</requirement> -->
   </requirements>
   <stdio>
     <exit_code range="1" level="fatal" description="Missing parameter error" />
@@ -28,24 +28,32 @@
   <command>
     <![CDATA[
 python3 '$__tool_directory__/history_metadata_extractor.py'
-  --input '$input'
-  --output '$output'
+  --jobs-attrs '$jobs_attrs'
+  --dataset-attrs '$dataset_attrs'
+  --output '$history_visu'
     ]]>
   </command>
   <inputs>
     <param
-      argument="--input"
+      argument="--jobs-attrs"
       type="data"
       format="txt"
       label="Exported history's jobs_attrs.txt file"
       help="Export and extract an history. Select the file 'jobs_attrs.txt'"
     />
+    <param
+      argument="--dataset-attrs"
+      type="data"
+      format="txt"
+      label="Exported history's dataset_attrs.txt file"
+      help="Export and extract an history. Select the file 'dataset_attrs.txt'"
+    />
   </inputs>
   <outputs>
     <data
-      name="output"
+      name="history_visu"
       format="html"
-      label="history_metadata.html"
+      label="history_visu.html"
     />
   </outputs>
   <help><![CDATA[
@@ -56,6 +64,25 @@ python3 '$__tool_directory__/history_metadata_extractor.py'
 .. class:: infomark
 
 ---------------------------------------------------
+
+
+
+
+History Metadata Extractor
+
+Extracts informations from the `jobs_attrs.txt` file in exported histories,
+and produces an html page showing these informations in a kawaii table.
+
+
+
+Metadata
+
+ * **@AUTHOR**: Lain Pavot - lain.pavot@inrae.fr
+ * **@CREATION DATE**: 22/06/2022
+ * **@DATE**: 22/06/2022
+ * **@VERSION**: 0.1.0
+
+
 
 
 ]]>

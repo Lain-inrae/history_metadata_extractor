@@ -1,0 +1,48 @@
+
+<!doctype HTML>
+<html>
+<style>{styles}</style>
+  <body
+    class="bg-secondary bg-gradient"
+    style="--bs-bg-opacity: .1; padding-top: 80px;"
+  >
+    <nav
+      class="navbar justify-content-center navbar-dark navbar-expand"
+      id="history_metadata_extractor_masthead"
+      style="
+        background-color: #2c3143;
+        top:0px;
+        position:fixed;
+        width: 100%;
+        z-index: 999 ;
+      "
+    >
+      <a class="navbar-brand">
+        <span class="navbar-brand-title">{title}</span>
+      </a>
+
+      <button id="history_metadata_extractor_top" class="btn btn-outline-light d-block m-2">
+        Top
+      </button>
+      <button id="history_metadata_extractor_folder" class="btn btn-outline-light d-block m-2">
+        Fold/Unfold tables
+      </button>
+      <button id="history_metadata_extractor_toggle_deleted" class="btn btn-outline-light d-block m-2">
+        Show/Hide deleted
+      </button>
+      <button id="history_metadata_extractor_bottom" class="btn btn-outline-light d-block m-2">
+        Bottom
+      </button>
+    </nav>
+    <div
+      id="history_metadata_extractor_content"
+      class="container pt-2 bg-white"
+      style="overflow-y: auto ; height: 100%"
+    >
+      {table_list}
+    </div>
+    <script>
+      {javascript}
+    </script>
+  </body>
+</html>",

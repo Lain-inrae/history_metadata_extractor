@@ -1,160 +1,36 @@
 #!/usr/bin/env python
 
 import json
+import os
+import sys
 
 
-PAGE_TEMPLATE = '\n'.join((
-  "<!doctype HTML>",
-  "<html>",
-  "{styles}",
-  "{header}",
-  """
-    <div
-      style="
-        position: fixed ;
-        top: 80px ;
-        left: 0px ;
-        color: white;
-        background-color: #2c3143;
-        z-index: 999 ;
-      "
-    >
-      <button
-        id="top"
-        class="btn btn-outline-light d-block m-2"
-      >Top</button>
-      <button
-        id="folder"
-        class="btn btn-outline-light d-block m-2"
-      >Fold/Unfold tables</button>
-      <button
-        id="toggle_deleted"
-        class="btn btn-outline-light d-block m-2"
-      >Show/Hide deleted</button>
-      <button
-        id="bottom"
-        class="btn btn-outline-light d-block m-2"
-      >Bottom</button>
-    </div>
-  """,
-  """
-  <nav
-    class="navbar justify-content-center navbar-dark navbar-expand"
-    id="masthead"
-    style="
-      background-color: #2c3143;
-      top:0px;
-      position:fixed;
-      width: 100%;
-      z-index: 999 ;
-    "
-  >
-    <a class="navbar-brand">
-      <span class="navbar-brand-title">{title}</span>
-    </a>
-  </nav>
-  """,
-  "  <body",
-  "    class=\"bg-secondary bg-gradient\"",
-  "    style=\"--bs-bg-opacity: .1; padding-top: 80px\"",
-  "  >",
-  """
-      <div
-        id=\"content\"
-        class=\"container pt-2 bg-white\"
-        style=\"overflow-y: auto ; height: 100%\"
-      >
-  """,
-  "        {table_list}",
-  "      </div>"
-  "    </div>"
-  "  </body>",
-  "<script>{javascript}</script>",
-  "</html>",
-))
+with open(os.path.join(sys.path[0], "static", "app.css")) as css:
+  CSS_STYLES = css.read()
 
-HEADER = """
-<head>
-  <link href="vendor/bootstrap.min.css" rel="stylesheet" />
-</head>
-"""
-CSS_STYLES = """
-<style>
-html, body {
-  height: 100% ;
-}
-</style>
-"""
+with open(os.path.join(sys.path[0], "vendor", "bootstrap.min.css")) as bootstrap:
+  CSS_STYLES = f"{CSS_STYLES}\n{bootstrap.read()}"
 
-JAVASCRIPT = """
+with open(os.path.join(sys.path[0], "static", "app.js")) as js:
+  JAVASCRIPT = js.read()
 
-var content = document.getElementById("content") ;
-document.getElementById("top").onclick = () => {
-  content.scrollTo(0, 0);
-} ;
-document.getElementById("bottom").onclick = () => {
-  content.scrollTo(0, content.scrollHeight);
-} ;
-var folded = false ;
-document.getElementById("folder").onclick = (e) => {
-  if (folded) {
-    var func = (item) => item.classList.remove("d-none") ;
-  } else {
-    var func = (item) => item.classList.add("d-none") ;
-  }
-  Array.prototype.forEach.call(
-    document.getElementsByClassName("table"),
-    func
-  ) ; 
-  folded = !folded ;
-}
-var show_deleted = true ;
-document.getElementById("toggle_deleted").onclick = (e) => {
-  show_deleted = !show_deleted ;
-  if (show_deleted) {
-    var func = (item) => item.classList.remove("d-none") ;
-  } else {
-    var func = (item) => item.classList.add("d-none") ;
-  }
-  Array.prototype.forEach.call(
-    document.getElementsByClassName("deleted"),
-    func
-  ) ; 
-}
+with open(os.path.join(sys.path[0], "static", "app.template.html")) as template:
+  PAGE_TEMPLATE = template.read()
 
-Array.prototype.forEach.call(document.getElementsByTagName("h2"), (h2) => {
-  var table = h2.nextSibling.nextSibling.nextSibling.nextSibling ;
-  h2.onclick = (e) => {
-    if (table.classList.contains("d-none")) {
-      table.classList.remove("d-none")
-    } else {
-      table.classList.add("d-none")
-    }
-  } ;
-})
-"""
+with open(os.path.join(sys.path[0], "static", "title.template.html")) as template:
+  TITLE_TEMPLATE = template.read()
 
-TITLE_TEMPLATE = "<h1>Galaxy - {galaxy_version}</h1>"
+with open(os.path.join(sys.path[0], "static", "table.template.html")) as template:
+  TABLE_TEMPLATE = template.read()
 
-TABLE_TEMPLATE = '\n'.join((
-  "<div class=\"{classes}\">"
-  """
-<h2
-  style=\"cursor: pointer\"
-  title=\"click to fold/unfold the table\"
->{tool_name}</h2>
-""",
-  "<p>Outputs: {tool_output}</p>"
-  "<p>Status: {tool_status}</p>"
-  "<table class=\"table table-bordered table-dark table-striped table-hover d-block\">",
-  "{table}",
-  "</table>",
-  "</div>"
-))
+with open(os.path.join(sys.path[0], "static", "header_list.template.html")) as template:
+  HEADER_LIST_TEMPLATE = template.read()
 
 HEADER_LIST_TEMPLATE = '\n'.join((
-  "<thead class=\"\">",
+  "<thead>",
+  "  <tr>",
   "{header_list}",
+  "  </tr>",
   "</thead>",
 ))
 
@@ -166,7 +42,7 @@ TABLE_LINE_LIST_TEMPLATE = '\n'.join((
   "{table_lines}",
   "</tr>",
 ))
-TABLE_LINE_TEMPLATE = "<td class=\"\">{}</td>"
+TABLE_LINE_TEMPLATE = "<td>{}</td>"
 
 INDENT = "  "
 
@@ -203,7 +79,6 @@ def convert_to_html(jobs_attrs, dataset_attrs=None):
   if dataset_attrs:
     extract_dataset_attributes(dataset_attrs)
   return PAGE_TEMPLATE.format(
-    header=HEADER,
     styles=CSS_STYLES.replace("\n<", "\n  <"),
     javascript=JAVASCRIPT,
     title=indent(indent(get_title(jobs_attrs))),
@@ -223,9 +98,6 @@ def get_table_list(jobs_attrs):
   ))
 
 def convert_item_to_table(job_attr, dataset_id):
-  # if "dataset_attrs" in GLOBAL_CACHE:
-  #   encoded_jid = GLOBAL_CACHE["dataset_attrs"][index]["hid"]
-  # else:
   encoded_jid = job_attr.get("encoded_id")
   if HISTORY_CACHE:
     history = HISTORY_CACHE.get(dataset_id, {})
@@ -240,7 +112,7 @@ def convert_item_to_table(job_attr, dataset_id):
     status = f"Failed ({exit_code})"
     classes = "alert alert-danger"
   if hid == "DELETED":
-    classes += " deleted"
+    classes += " history_metadata_extractor_deleted"
   tool_name = job_attr["tool_id"]
   if tool_name.count("/") >= 4:
     tool_name = job_attr["tool_id"].split("/")[-2]
@@ -262,7 +134,6 @@ def convert_parameters_to_html(job_attr):
     if key not in ("dbkey", "chromInfo", "__input_ext", "request_json")
   ]
   return '\n'.join((
-    # indent(get_table_header(params, keys)),
     indent(get_table_header(params, ["value", "name", "extension", "hid"])),
     indent(get_table_lines(params, keys)),
   ))
@@ -328,7 +199,7 @@ def is_file_v2(param):
 
 def get_table_header(params, keys):
   return HEADER_LIST_TEMPLATE.format(
-    header_list=indent('\n'.join(map(HEADER_TEMPLATE.format, [""]+keys)))
+    header_list=indent(indent('\n'.join(map(HEADER_TEMPLATE.format, [""]+keys))))
   )
 
 def get_table_lines(params, keys):
@@ -421,8 +292,24 @@ if __name__ == "__main__":
     metavar="FILE",
     default="out.html"
   )
+  parser.add_option(
+    "-v", "--version",
+    action="store_true",
+    help="Show this script's version and exits",
+  )
 
   (options, args) = parser.parse_args()
+
+  if options.version:
+
+    import re
+
+    with open(os.path.join(sys.path[0], "README.md")) as readme:
+      for line in readme.readlines():
+        if "**@VERSION**" in line:
+          print(re.search(r"\d+\.\d+\.\d+", line)[0])
+    sys.exit(0)
+
   with open(options.jobs_attrs) as j:
     jobs_attrs = json.load(j)
 
