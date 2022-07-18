@@ -2,3 +2,10 @@
 html, body {
   height: 100% ;
 }
+
+.history_metadata_extractor_h2.kawaii:before,
+.history_metadata_extractor_h2.kawaii:after{content:'≧◡≦'}
+.history_metadata_extractor_status.kawaii:after,
+.history_metadata_extractor_status.kawaii:before{content: '(●´ω｀●)'}
+.history_metadata_extractor_glitter.kawaii:before{content: '(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧'}
+#glitter-generator{cursor: pointer}

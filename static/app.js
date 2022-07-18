@@ -17,6 +17,17 @@ document.getElementById("history_metadata_extractor_folder").onclick = (e) => {
   folded = ! folded ;
 } ;
 
+var kawaii = false ;
+document.getElementById("glitter-generator").onclick = (e) => {
+  if (kawaii) {
+    var func = (item) => item.classList.remove("kawaii") ;
+  } else {
+    var func = (item) => item.classList.add("kawaii") ;
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("[class^=history_metadata_extractor_]"), func) ; 
+  kawaii = ! kawaii ;
+} ;
+
 var show_deleted = true ;
 document.getElementById("history_metadata_extractor_toggle_deleted").onclick = (e) => {
   show_deleted = !show_deleted ;
