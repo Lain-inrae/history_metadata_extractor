@@ -12,8 +12,7 @@
     <token name="@VERSION_SUFFIX@">0</token>
   </macros>
   <requirements>
-    <requirement type="package" version="3.10">python</requirement>
-    <!-- <requirement type="package" version="1.7.1">py-optparse</requirement> -->
+    <requirement type="package" version="3.10.5">python</requirement>
   </requirements>
   <stdio>
     <exit_code range="1" level="fatal" description="Missing parameter error" />
@@ -56,6 +55,13 @@ python3 '$__tool_directory__/history_metadata_extractor.py'
       label="history_visu.html"
     />
   </outputs>
+  <tests>
+    <test>
+      <param name="jobs_attrs" value="jobs_attrs.txt" />
+      <param name="dataset_attrs" value="datasets_attrs.txt" />
+      <output name="history_visu" file="out.html" />
+    </test>
+  </tests>
   <help><![CDATA[
 .. class:: infomark
 
