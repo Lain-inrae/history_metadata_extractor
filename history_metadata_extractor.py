@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+## **@AUTHOR**: Lain Pavot - lain.pavot@inrae.fr
+## **@DATE**: 22/06/2022
+
+
 import json
 import os
 import sys
@@ -86,11 +90,11 @@ def get_table_list(jobs_attrs):
   return '\n'.join((
     convert_item_to_table(job_attr, dataset_id)
     for job_attr in jobs_attrs
-    for dataset_id_set in (
+    for dataset_id_set in sorted(list((
       job_attr["output_dataset_mapping"]
       or {1:"unknown"}
-    ).values()
-    for dataset_id in dataset_id_set
+     ).values()))
+    for dataset_id in sorted(dataset_id_set)
   ))
 
 def convert_item_to_table(job_attr, dataset_id):
@@ -109,7 +113,8 @@ def convert_item_to_table(job_attr, dataset_id):
     classes = "alert alert-danger"
   if hid == "DELETED":
     classes += " history_metadata_extractor_deleted"
-  tool_name = job_attr["tool_id"]
+  print(job_attr)
+  tool_name = job_attr["tool_id"] or "unknown"
   if tool_name.count("/") >= 4:
     tool_name = job_attr["tool_id"].split("/")[-2]
   tool_name = tool_name + " - " + job_attr["tool_version"]
@@ -135,6 +140,7 @@ def convert_parameters_to_html(job_attr):
   ))
 
 def params_enrichment(job_attr, params):
+  print(params)
   if (
     all(map(params.__contains__, ("request_json", "files")))
     and "encoded_id" in job_attr
