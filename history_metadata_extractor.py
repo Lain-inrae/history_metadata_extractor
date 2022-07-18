@@ -93,7 +93,10 @@ def get_table_list(jobs_attrs):
   return '\n'.join((
     convert_item_to_table(job_attr, dataset_id)
     for job_attr in jobs_attrs
-    for dataset_id_set in (job_attr["output_dataset_mapping"] or {1:"unknown"}).values()
+    for dataset_id_set in (
+      job_attr["output_dataset_mapping"]
+      or {1:"unknown"}
+    ).values()
     for dataset_id in dataset_id_set
   ))
 
@@ -248,12 +251,12 @@ def extract_param_value(param):
       ids = []
       for file_id in param["values"]:
         file_id = file_id["id"]
-        ids.append(file_id)
-        if file_id in DATASET_CACHE:
-          file_info = DATASET_CACHE[file_id]
+        if file_id in HISTORY_CACHE:
+          file_info = HISTORY_CACHE[file_id]
           param["name"] = file_info["name"]
           param["hid"] = file_info["hid"]
           param["extension"] = file_info["extension"]
+          ids.append(file_id)
       return join_noempty(ids)
   if isinstance(param, (str, int, float)):
     return str(param)
