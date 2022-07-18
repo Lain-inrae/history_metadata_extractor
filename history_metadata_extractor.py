@@ -47,14 +47,7 @@ TABLE_LINE_TEMPLATE = "<td>{}</td>"
 INDENT = "  "
 
 
-JOB_CACHE = {}
 HISTORY_CACHE = {}
-DATASET_CACHE = {}
-GLOBAL_CACHE = {
-  "jobs": JOB_CACHE,
-  "history": HISTORY_CACHE,
-  "dataset": DATASET_CACHE,
-}
 
 def indent(text):
   if text.startswith("\n"):
@@ -161,11 +154,6 @@ def params_enrichment(job_attr, params):
         str(file["ext"])
         for file in files
       )
-    JOB_CACHE[job_attr["encoded_id"]] = {
-      "hid": join_noempty(file["hid"] for file in params["files"]),
-      "name": join_noempty(file["name"] for file in params["files"]),
-      "extension": join_noempty(file["extension"] for file in params["files"]),
-    }
 
 def iter_parameter_keys(params):
   for key in params:
