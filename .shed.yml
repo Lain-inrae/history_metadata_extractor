@@ -1,0 +1,7 @@
+categories: [Visualization]
+description: '[Visualization] Produces a readable display of informations from exported histories.'
+long_description: 'Extracts informations from the `jobs_attrs.txt` file in exported histories,
+and produces an html page showing informations in kawaii tables.
+Uses the datasets_attrs.txt file if provided to extract more and better informations.'
+name: history_metadata_extractor
+owner: lain

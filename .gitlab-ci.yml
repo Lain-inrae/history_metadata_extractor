@@ -1,0 +1,77 @@
+
+stages:
+  - build_docker
+  - test_docker
+  - update_github
+  - release-ts
+
+
+variables:
+  TS_PFEM_TARGET: "http://147.99.129.179:9009/toolshed"
+  TS_PUBLIC_TARGET: "https://toolshed.g2.bx.psu.edu/"
+  PROJECT_NAME: history_metadata_extractor
+  DOCKER_IMAGE_NAME: history_metadata_extractor
+
+
+Build docker image:
+  stage: build_docker
+  tags:
+    - bash
+  script:
+    - echo "==================================";
+    - echo "[info] Building Docker image for $DOCKER_IMAGE_NAME ";
+    - docker build -t $DOCKER_IMAGE_NAME .
+
+
+Planemo Lint Task:
+  stage: test_docker
+  image: $DOCKER_IMAGE_NAME
+  before_script:
+  script:
+    - echo "==================================";
+    - echo "[info] Linting $CI_PROJECT_NAME/*.xml ";
+    - . "$PLANEMO_VENV_LOCATION"/bin/activate ;
+    - planemo lint --fail_level error ./*.xml
+  tags:
+      - docker
+
+
+Planemo Tool Testing:
+  stage: test_docker
+  image: $DOCKER_IMAGE_NAME
+  script:
+    - echo "==================================";
+    - echo "[info] Testing ${TOOL_LOCATION} with planemo ";
+    - . "$PLANEMO_VENV_LOCATION"/bin/activate ;
+    - planemo test
+      --conda_dependency_resolution
+      --test_data=./test-data
+      ./history_metadata_extractor.xml
+  tags:
+      - docker
+  only:
+    refs:
+      - dev
+
+
+release-ts:
+  image: $DOCKER_IMAGE_NAME
+  stage: release-ts
+  tags:
+    - docker
+  script:
+    - echo "planemo shed_update
+      --shed_key=\$TOOLSHED_API_KEY
+      --check_diff
+      --shed_target \"${TS_PUBLIC_TARGET}\"
+      "
+    - . "$PLANEMO_VENV_LOCATION"/bin/activate
+    - planemo shed_update
+      --shed_key=$TOOLSHED_API_KEY
+      --check_diff
+      --shed_target "${TS_PUBLIC_TARGET}"
+      --message=" master branch Updating"
+  only:
+    refs:
+      - master
+
