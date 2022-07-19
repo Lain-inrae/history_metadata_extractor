@@ -113,7 +113,6 @@ def convert_item_to_table(job_attr, dataset_id):
     classes = "alert alert-danger"
   if hid == "DELETED":
     classes += " history_metadata_extractor_deleted"
-  print(job_attr)
   tool_name = job_attr["tool_id"] or "unknown"
   if tool_name.count("/") >= 4:
     tool_name = job_attr["tool_id"].split("/")[-2]
@@ -140,7 +139,6 @@ def convert_parameters_to_html(job_attr):
   ))
 
 def params_enrichment(job_attr, params):
-  print(params)
   if (
     all(map(params.__contains__, ("request_json", "files")))
     and "encoded_id" in job_attr
