@@ -63,34 +63,60 @@ python3 '$__tool_directory__/history_metadata_extractor.py'
     </test>
   </tests>
   <help><![CDATA[
-.. class:: infomark
-
-**Authors** Lain Pavot
-
-.. class:: infomark
-
----------------------------------------------------
-
-
-
-
-History Metadata Extractor
-
-Extracts informations from the `jobs_attrs.txt` file in exported histories,
-and produces an html page showing these informations in a kawaii table.
-
-
-
-Metadata
 
  * **@AUTHOR**: Lain Pavot - lain.pavot@inrae.fr
  * **@CREATION DATE**: 22/06/2022
- * **@DATE**: 22/06/2022
- * **@VERSION**: 0.1.0
+ * **@LAST UPDATE DATE**: 08/08/2022
+ * **@VERSION**: @TOOL_VERSION@
 
+----
 
+==========================
+History Metadata Extractor
+==========================
 
+-------
+summary
+-------
 
-]]>
+ | This tool xtracts informations from the `jobs_attrs.txt` and
+   `datasets_attrs` files in exported histories, and produces an html page
+   showing these informations in a kawaii table.
+
+-----
+story
+-----
+
+ | You have conscientiously stored your Galaxy history exports through the
+   years and now need to mine into it. You want to check what has been done
+   but you fear the time needed to get all the info by reloading your
+   histories into Galaxy for manual mining. You know there is this
+   'jobs_attrs.txt' file that contains the golden info, but eh...
+
+ | So unfriendly!
+
+ | Worry no more! The History Metadata Extractor is there for you! Just upload
+   your 'jobs_attrs.txt' file and generate a user-friendly summary of the main
+   basic info you may be interested in. Tools used, parameters set... The overview
+   you have been dreaming of in a nice html file! You're welcome :)
+
+--------------------
+How to use this tool
+--------------------
+
+Your exported histories are at the zip format.
+Extract the history you want to visualize, and upload the following files:
+
+ * jobs_attrs.txt
+ * datasets_attrs.txt
+
+Run the History Metadata Extractor tool with these input files. You will get a
+HTML file in output. This file can be viewed clicking on the little eye on
+the right of the output card in the output panel.
+
+--
+
+Love & Unicorns - Lain
+  ]]>
   </help>
 </tool>
