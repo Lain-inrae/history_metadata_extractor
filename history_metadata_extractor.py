@@ -121,7 +121,6 @@ def convert_item_to_table(job_attr, dataset_id):
   return TABLE_TEMPLATE.format(
     classes=classes,
     tool_name=tool_name,
-    tool_output="",
     tool_status=status,
     table=convert_parameters_to_html(job_attr)
   )
