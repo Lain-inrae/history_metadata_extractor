@@ -9,25 +9,28 @@ import os
 import sys
 
 
-with open(os.path.join(sys.path[0], "static", "app.css")) as css:
+STATIC = os.path.join(sys.path[0], "static")
+VENDOR = os.path.join(sys.path[0], "vendor")
+
+with open(os.path.join(STATIC, "app.css")) as css:
   CSS_STYLES = css.read()
 
-with open(os.path.join(sys.path[0], "vendor", "bootstrap.min.css")) as bootstrap:
+with open(os.path.join(VENDOR, "bootstrap.min.css")) as bootstrap:
   CSS_STYLES = f"{CSS_STYLES}\n{bootstrap.read()}"
 
-with open(os.path.join(sys.path[0], "static", "app.js")) as js:
+with open(os.path.join(STATIC, "app.js")) as js:
   JAVASCRIPT = js.read()
 
-with open(os.path.join(sys.path[0], "static", "app.template.html")) as template:
+with open(os.path.join(STATIC, "app.template.html")) as template:
   PAGE_TEMPLATE = template.read()
 
-with open(os.path.join(sys.path[0], "static", "title.template.html")) as template:
+with open(os.path.join(STATIC, "title.template.html")) as template:
   TITLE_TEMPLATE = template.read()
 
-with open(os.path.join(sys.path[0], "static", "table.template.html")) as template:
+with open(os.path.join(STATIC, "table.template.html")) as template:
   TABLE_TEMPLATE = template.read()
 
-with open(os.path.join(sys.path[0], "static", "header_list.template.html")) as template:
+with open(os.path.join(STATIC, "header_list.template.html")) as template:
   HEADER_LIST_TEMPLATE = template.read()
 
 HEADER_LIST_TEMPLATE = '\n'.join((
