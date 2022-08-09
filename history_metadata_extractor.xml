@@ -8,7 +8,7 @@
     displays information from exported history's jobs_attrs.txt file.
   </description>
   <macros>
-    <token name="@TOOL_VERSION@">1.0.0</token>
+    <token name="@TOOL_VERSION@">0.1.0</token>
     <token name="@VERSION_SUFFIX@">0</token>
   </macros>
   <requirements>
