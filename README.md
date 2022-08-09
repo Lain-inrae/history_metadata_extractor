@@ -77,5 +77,5 @@ Metadata
 
  * **@AUTHOR**: Lain Pavot - lain.pavot@inrae.fr
  * **@CREATION DATE**: 22/06/2022
- * **@LAST UPDATE DATE**: 08/08/2022
- * **@VERSION**: 0.1.0
+ * **@LAST UPDATE DATE**: 09/08/2022
+ * **@VERSION**: 0.2.0
