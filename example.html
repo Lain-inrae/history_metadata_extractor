@@ -16277,7 +16277,7 @@ document.getElementById("history_metadata_extractor_toggle_deleted").onclick = (
 Array.prototype.forEach.call(document.getElementsByClassName(
   "history_metadata_extractor_h2"),
   (h2) => {
-    var table = h2.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling ;
+    var table = h2.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling ;
     h2.onclick = (e) => {
       if (table.classList.contains("d-none")) {
         table.classList.remove("d-none") ;
